@@ -10,7 +10,9 @@ function _start_agent() {
 	ssh-agent -s ${lifetime:+-t} ${lifetime} | sed 's/^echo/#echo/' >! $_ssh_env_cache
 	chmod 600 $_ssh_env_cache
 	. $_ssh_env_cache > /dev/null
+}
 
+function _add_identities() {
 	# load identies
 	zstyle -a :omz:plugins:ssh-agent identities identities
 
@@ -42,6 +44,9 @@ else
 	_start_agent
 fi
 
+_add_identities
+
 # tidy up after ourselves
 unset _agent_forwarding _ssh_env_cache
 unfunction _start_agent
+unfunction _add_identities
