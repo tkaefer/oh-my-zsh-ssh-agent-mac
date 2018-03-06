@@ -2,21 +2,22 @@ typeset _agent_forwarding _ssh_env_cache
 
 function _start_agent() {
 	local lifetime
-	local -a identities
 
 	# start ssh-agent and setup environment
 	zstyle -s :omz:plugins:ssh-agent lifetime lifetime
 
+  echo "starting ssh-agent..."
 	ssh-agent -s ${lifetime:+-t} ${lifetime} | sed 's/^echo/#echo/' >! $_ssh_env_cache
 	chmod 600 $_ssh_env_cache
 	. $_ssh_env_cache > /dev/null
 }
 
 function _add_identities() {
+	local -a identities
 	# load identies
 	zstyle -a :omz:plugins:ssh-agent identities identities
 
-	echo starting ssh-agent...
+	echo "loading identies"
 	if [[ "$OSTYPE" = darwin* ]]; then
 		/usr/bin/ssh-add -K $HOME/.ssh/${^identities}
 	else
